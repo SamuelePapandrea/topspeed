@@ -9,172 +9,101 @@
 <meta name="theme-color" content="#0a0a0a">
 <title>Top Speed Logger</title>
 <style>
-:root {
-  --bg: #0f0f0f;
-  --bg2: #1a1a1a;
-  --bg3: #242424;
-  --border: rgba(255,255,255,0.1);
-  --border2: rgba(255,255,255,0.18);
-  --text: #f0f0f0;
-  --text2: #888;
-  --text3: #555;
-  --green: #2ecc71;
-  --red: #e74c3c;
-  --blue: #3498db;
-  --amber: #f39c12;
-  --r: 10px;
-  --r2: 14px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'SF Mono', 'Fira Mono', monospace; overscroll-behavior: none; }
-body { overflow-x: hidden; }
-
-.screen { display: none; padding: 14px; max-width: 480px; margin: 0 auto; padding-bottom: 30px; }
-.screen.active { display: block; }
-
-/* Typography */
-.page-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .12em; }
-.label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
-.val { font-size: 22px; font-weight: 500; color: var(--text); }
-.unit { font-size: 11px; color: var(--text2); margin-left: 2px; }
-
-/* Cards */
-.card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r2); padding: 12px 14px; margin-bottom: 8px; }
-.mcard { background: var(--bg3); border-radius: var(--r); padding: 10px 12px; }
-.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 8px; }
-
-/* Buttons */
-.btn { width: 100%; padding: 11px; font-size: 13px; font-weight: 500; border: 0.5px solid var(--border2); border-radius: var(--r); background: var(--bg2); color: var(--text); cursor: pointer; font-family: inherit; margin-bottom: 6px; transition: background .15s; }
-.btn:active { background: var(--bg3); }
-.btn.green { border-color: var(--green); color: var(--green); }
-.btn.red { border-color: var(--red); color: var(--red); }
-.btn.blue { border-color: var(--blue); color: var(--blue); }
-.btn-row { display: flex; gap: 6px; margin-bottom: 8px; }
-.btn-row .btn { margin-bottom: 0; }
-
-/* Inputs */
-.inp { width: 100%; padding: 10px 12px; font-size: 13px; border: 0.5px solid var(--border2); border-radius: var(--r); background: var(--bg2); color: var(--text); font-family: inherit; margin-bottom: 6px; outline: none; }
-.inp:focus { border-color: var(--blue); }
-.config-inp { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text2); }
-.config-inp label { flex: 1; }
-.config-inp input { width: 65px; padding: 5px 8px; font-size: 12px; text-align: right; border: 0.5px solid var(--border2); border-radius: var(--r); background: var(--bg3); color: var(--text); font-family: inherit; outline: none; }
-
-/* Top bar */
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.link { font-size: 11px; color: var(--text2); cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; font-family: inherit; }
-
-/* GPS badge */
-.gps-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.gps-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); padding: 5px 9px; border: 0.5px solid var(--border2); border-radius: var(--r); }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
-.dot.fix { background: var(--green); animation: pulse 1.5s infinite; }
-.dot.nofix { background: var(--red); }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/* Speed display */
-.speed-big { text-align: center; padding: 14px 0 10px; border-bottom: 0.5px solid var(--border); margin-bottom: 10px; }
-.speed-big .v { font-size: 72px; font-weight: 500; line-height: 1; letter-spacing: -3px; color: var(--text); }
-.speed-big .u { font-size: 20px; color: var(--text2); }
-.speed-big .l { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .12em; margin-top: 4px; }
-
-/* Section title */
-.sec-title { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; padding-left: 2px; }
-
-/* CV */
-.cv-num { font-size: 36px; font-weight: 500; }
-
-/* Status bar */
-.statusbar { font-size: 10px; color: var(--text3); text-align: center; padding: 7px 0; border-top: 0.5px solid var(--border); margin-top: 8px; }
-
-/* Messages */
-.err { font-size: 11px; color: var(--red); padding: 6px 8px; border: 0.5px solid var(--red); border-radius: var(--r); margin-bottom: 6px; }
-.ok { font-size: 11px; color: var(--green); padding: 6px 8px; border: 0.5px solid var(--green); border-radius: var(--r); margin-bottom: 6px; }
-
-/* History */
-.session-item { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--r); padding: 10px 12px; margin-bottom: 6px; cursor: pointer; }
-.session-item:active { background: var(--bg3); }
-.si-name { font-size: 13px; font-weight: 500; color: var(--text); }
-.si-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
-.si-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; font-size: 11px; color: var(--text3); }
-.si-del { float: right; font-size: 11px; color: var(--red); cursor: pointer; background: none; border: none; padding: 0; font-family: inherit; }
-
-/* Tabs */
-.tab-row { display: flex; margin-bottom: 10px; border: 0.5px solid var(--border2); border-radius: var(--r); overflow: hidden; }
-.tab { flex: 1; padding: 8px; font-size: 11px; text-align: center; cursor: pointer; background: var(--bg2); color: var(--text2); border: none; border-right: 0.5px solid var(--border); font-family: inherit; }
-.tab:last-child { border-right: none; }
-.tab.active { background: var(--bg3); color: var(--text); font-weight: 500; }
-
-/* Compare table */
-.compare-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.compare-table th { text-align: left; padding: 5px 6px; color: var(--text3); font-weight: 400; border-bottom: 0.5px solid var(--border); }
-.compare-table td { padding: 6px 6px; border-bottom: 0.5px solid var(--border); color: var(--text2); }
-.compare-table td.best { color: var(--green); font-weight: 500; }
-
-/* Login center */
-.login-wrap { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 24px 14px; max-width: 480px; margin: 0 auto; }
-.login-logo { text-align: center; margin-bottom: 28px; }
-.login-logo .lt { font-size: 18px; font-weight: 500; color: var(--text); }
-.login-logo .ls { font-size: 11px; color: var(--text3); margin-top: 4px; }
-
-/* Profile canvas */
-.prof-canvas { width: 100%; height: 52px; display: block; margin-top: 7px; }
-
-/* Scrollable screens */
-.scrollable { overflow-y: auto; }
+:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);--text:#f0f0f0;--text2:#888;--text3:#555;--green:#2ecc71;--red:#e74c3c;--blue:#3498db;--r:10px;--r2:14px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Mono',monospace;overscroll-behavior:none}
+body{overflow-x:hidden}
+.screen{display:none;padding:14px;max-width:480px;margin:0 auto;padding-bottom:40px}
+.screen.active{display:block}
+.label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px}
+.val{font-size:22px;font-weight:500;color:var(--text)}
+.unit{font-size:11px;color:var(--text2);margin-left:2px}
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r2);padding:12px 14px;margin-bottom:8px}
+.mcard{background:var(--bg3);border-radius:var(--r);padding:10px 12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.btn{width:100%;padding:11px;font-size:13px;font-weight:500;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;margin-bottom:6px}
+.btn:active{background:var(--bg3)}
+.btn.green{border-color:var(--green);color:var(--green)}
+.btn.red{border-color:var(--red);color:var(--red)}
+.btn.blue{border-color:var(--blue);color:var(--blue)}
+.btn-row{display:flex;gap:6px;margin-bottom:8px}
+.btn-row .btn{margin-bottom:0}
+.inp{width:100%;padding:10px 12px;font-size:13px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);font-family:inherit;margin-bottom:6px;outline:none}
+.inp:focus{border-color:var(--blue)}
+.ci{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;color:var(--text2)}
+.ci label{flex:1}
+.ci input,.ci select{padding:5px 8px;font-size:12px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text);font-family:inherit;outline:none}
+.ci input{width:70px;text-align:right}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ptitle{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.link{font-size:11px;color:var(--text2);cursor:pointer;text-decoration:underline;background:none;border:none;padding:0;font-family:inherit}
+.gps-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.gbadge{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);padding:5px 9px;border:0.5px solid var(--border2);border-radius:var(--r)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.dot.fix{background:var(--green);animation:pulse 1.5s infinite}
+.dot.nofix{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.spdbig{text-align:center;padding:14px 0 10px;border-bottom:0.5px solid var(--border);margin-bottom:10px}
+.spdbig .v{font-size:72px;font-weight:500;line-height:1;letter-spacing:-3px}
+.spdbig .u{font-size:20px;color:var(--text2)}
+.spdbig .l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.stitle{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;padding-left:2px}
+.statusbar{font-size:10px;color:var(--text3);text-align:center;padding:7px 0;border-top:0.5px solid var(--border);margin-top:8px}
+.err{font-size:11px;color:var(--red);padding:6px 8px;border:0.5px solid var(--red);border-radius:var(--r);margin-bottom:6px}
+.ok{font-size:11px;color:var(--green);padding:6px 8px;border:0.5px solid var(--green);border-radius:var(--r);margin-bottom:6px}
+.sitem{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:6px;cursor:pointer}
+.sitem:active{background:var(--bg3)}
+.sname{font-size:13px;font-weight:500;color:var(--text)}
+.smeta{font-size:11px;color:var(--text2);margin-top:2px}
+.sstats{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--text3)}
+.sdel{float:right;font-size:11px;color:var(--red);cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.tabrow{display:flex;margin-bottom:10px;border:0.5px solid var(--border2);border-radius:var(--r);overflow:hidden}
+.tab{flex:1;padding:8px;font-size:11px;text-align:center;cursor:pointer;background:var(--bg2);color:var(--text2);border:none;border-right:0.5px solid var(--border);font-family:inherit}
+.tab:last-child{border-right:none}
+.tab.active{background:var(--bg3);color:var(--text);font-weight:500}
+.ctab{width:100%;border-collapse:collapse;font-size:11px}
+.ctab th{text-align:left;padding:5px 6px;color:var(--text3);font-weight:400;border-bottom:0.5px solid var(--border)}
+.ctab td{padding:6px 6px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+.ctab td.best{color:var(--green);font-weight:500}
+.pcanvas{width:100%;height:52px;display:block;margin-top:7px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="scLogin" class="screen active">
-  <div class="login-wrap">
-    <div class="login-logo">
-      <div class="lt">Top Speed Logger</div>
-      <div class="ls">GPS · Altimetria · Potenza</div>
-    </div>
-    <div class="card">
-      <div id="loginErr"></div>
-      <input class="inp" id="loginUser" placeholder="username" autocomplete="off" autocapitalize="none">
-      <input class="inp" id="loginPass" type="password" placeholder="password">
-      <button class="btn green" onclick="doLogin()">Accedi</button>
-      <button class="btn blue" onclick="doRegister()">Crea account</button>
-    </div>
-    <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px">
-      I dati sono salvati localmente su questo dispositivo.
-    </div>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div id="scMain" class="screen scrollable">
+<div id="scMain" class="screen active">
   <div class="topbar" style="margin-top:6px">
-    <div class="page-title">Top Speed</div>
-    <div style="display:flex;gap:10px;align-items:center">
-      <span id="userLabel" style="font-size:11px;color:var(--text2)"></span>
-      <button class="link" onclick="showScreen('scHistory')">storico</button>
-      <button class="link" style="color:var(--red)" onclick="doLogout()">esci</button>
-    </div>
+    <div class="ptitle">Top Speed Logger</div>
+    <button class="link" onclick="showScreen('scHistory')">storico ›</button>
   </div>
 
   <div class="gps-row">
-    <div class="gps-badge">
-      <div class="dot" id="gpsDot"></div>
-      <span id="gpsStatus">no fix</span>
-    </div>
+    <div class="gbadge"><div class="dot" id="gpsDot"></div><span id="gpsStatus">no fix</span></div>
     <div style="font-size:11px;color:var(--text3)" id="gpsAcc">acc —</div>
   </div>
 
   <div class="card">
-    <div class="config-inp"><label>Peso mezzo (kg)</label><input type="number" id="wMezzo" value="75" min="20" max="300"></div>
-    <div class="config-inp"><label>Peso pilota (kg)</label><input type="number" id="wPilota" value="70" min="40" max="150"></div>
+    <div class="ci"><label>Tipo veicolo</label>
+      <select id="vType" onchange="updateVehicle()">
+        <option value="scooter50">Scooter 50cc</option>
+        <option value="scooter125">Scooter 125cc</option>
+        <option value="moto">Moto</option>
+        <option value="utilitaria" selected>Auto utilitaria</option>
+        <option value="berlina">Auto berlina</option>
+        <option value="sportiva">Auto sportiva</option>
+        <option value="suv">SUV</option>
+      </select>
+    </div>
+    <div class="ci"><label>Peso veicolo (kg)</label><input type="number" id="wMezzo" value="1100" min="20" max="3000"></div>
+    <div class="ci"><label>Peso pilota/i (kg)</label><input type="number" id="wPilota" value="80" min="40" max="300"></div>
+    <div style="font-size:10px;color:var(--text3);margin-top:2px" id="vNote">Cd 0.32 · A 2.2 m²</div>
   </div>
 
-  <div class="speed-big">
+  <div class="spdbig">
     <div><span class="v" id="speedNow">0</span><span class="u"> km/h</span></div>
     <div class="l">velocità attuale</div>
   </div>
 
-  <div class="sec-title">Velocità sessione</div>
+  <div class="stitle">Velocità sessione</div>
   <div class="grid2">
     <div class="mcard"><div class="label">minima</div><div class="val" id="sMin">—<span class="unit">km/h</span></div></div>
     <div class="mcard"><div class="label">massima</div><div class="val" id="sMax">—<span class="unit">km/h</span></div></div>
@@ -182,7 +111,7 @@ body { overflow-x: hidden; }
     <div class="mcard"><div class="label">distanza</div><div class="val" id="sDist">0</div><div style="font-size:10px;color:var(--text2)" id="sDistU">m</div></div>
   </div>
 
-  <div class="sec-title">Altimetria</div>
+  <div class="stitle">Altimetria</div>
   <div class="grid2" style="margin-bottom:8px">
     <div class="mcard"><div class="label">attuale</div><div class="val" id="aNow">—<span class="unit">m slm</span></div></div>
     <div class="mcard"><div class="label">precisione</div><div class="val" id="aAcc">—<span class="unit">m</span></div></div>
@@ -195,19 +124,19 @@ body { overflow-x: hidden; }
       <span><span class="val" id="aDelta">0</span><span class="unit"> m</span></span>
       <span style="font-size:13px;color:var(--text2)">pendenza <span id="slope" style="color:var(--text);font-weight:500">0.0%</span></span>
     </div>
-    <canvas class="prof-canvas" id="profCanvas"></canvas>
+    <canvas class="pcanvas" id="profCanvas"></canvas>
   </div>
 
-  <div class="sec-title">Stima potenza</div>
+  <div class="stitle">Stima potenza</div>
   <div class="mcard" style="margin-bottom:10px">
     <div style="padding:8px 0">
-      <span class="cv-num" id="cvNum">—</span><span class="unit" style="font-size:15px"> CV</span>
+      <span style="font-size:36px;font-weight:500" id="cvNum">—</span><span class="unit" style="font-size:15px"> CV</span>
       <span style="font-size:11px;color:var(--text2);margin-left:6px" id="cvRange"></span>
     </div>
-    <div style="font-size:10px;color:var(--text3);line-height:1.5" id="cvNote">Avvia e raggiungi 20+ km/h.</div>
+    <div style="font-size:10px;color:var(--text3);line-height:1.5" id="cvNote">Avvia e raggiungi velocità.</div>
   </div>
 
-  <div id="sessionSaveArea" style="display:none">
+  <div id="saveArea" style="display:none;margin-bottom:8px">
     <input class="inp" id="sessionName" placeholder="nome sessione (es. provaSalerno)" autocapitalize="none">
     <div id="saveErr"></div>
     <button class="btn green" onclick="saveSession()">Salva sessione</button>
@@ -218,17 +147,15 @@ body { overflow-x: hidden; }
     <button class="btn red" id="btnStop" onclick="stopRun()" disabled>■ Stop</button>
     <button class="btn" onclick="resetRun()">↺ Reset</button>
   </div>
-
   <div class="statusbar" id="statusBar">In attesa GPS...</div>
 </div>
 
-<!-- HISTORY -->
-<div id="scHistory" class="screen scrollable">
+<div id="scHistory" class="screen">
   <div class="topbar" style="margin-top:6px">
-    <div class="page-title">Storico</div>
+    <div class="ptitle">Storico</div>
     <button class="link" onclick="showScreen('scMain')">← torna</button>
   </div>
-  <div class="tab-row">
+  <div class="tabrow">
     <button class="tab active" id="tabList" onclick="switchTab('list')">sessioni</button>
     <button class="tab" id="tabCompare" onclick="switchTab('compare')">confronto</button>
   </div>
@@ -236,364 +163,276 @@ body { overflow-x: hidden; }
   <div id="histCompare" style="display:none"></div>
 </div>
 
-<!-- DETAIL -->
-<div id="scDetail" class="screen scrollable">
+<div id="scDetail" class="screen">
   <div class="topbar" style="margin-top:6px">
-    <div class="page-title" id="detailTitle">Sessione</div>
+    <div class="ptitle" id="detailTitle">Sessione</div>
     <button class="link" onclick="showScreen('scHistory')">← storico</button>
   </div>
   <div id="detailBody"></div>
 </div>
 
 <script>
-let currentUser = null;
-let running = false;
-let watchId = null;
-let speeds = [], alts = [], altProfile = [], totalDist = 0, lastPos = null, lastSlopePct = 0;
-const MAX_PROF = 80;
+const VH={
+  scooter50: {label:'Scooter 50cc',  Cd:0.65,A:0.45,wDef:90,  pDef:70},
+  scooter125:{label:'Scooter 125cc', Cd:0.62,A:0.50,wDef:120, pDef:75},
+  moto:      {label:'Moto',          Cd:0.55,A:0.55,wDef:200, pDef:80},
+  utilitaria:{label:'Auto utilitaria',Cd:0.32,A:2.20,wDef:1100,pDef:80},
+  berlina:   {label:'Auto berlina',  Cd:0.28,A:2.30,wDef:1400,pDef:80},
+  sportiva:  {label:'Auto sportiva', Cd:0.26,A:2.00,wDef:1300,pDef:80},
+  suv:       {label:'SUV',           Cd:0.38,A:2.70,wDef:1800,pDef:80},
+};
 
-/* ---- Storage (localStorage) ---- */
-function lsGet(k) {
-  try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch { return null; }
-}
-function lsSet(k, v) {
-  try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; }
-}
-function lsDel(k) {
-  try { localStorage.removeItem(k); return true; } catch { return false; }
-}
-function lsKeys(prefix) {
-  const out = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith(prefix)) out.push(k);
-  }
-  return out;
+function updateVehicle(){
+  const v=VH[document.getElementById('vType').value];
+  document.getElementById('wMezzo').value=v.wDef;
+  document.getElementById('wPilota').value=v.pDef;
+  document.getElementById('vNote').textContent='Cd '+v.Cd+' · A '+v.A+' m²';
 }
 
-/* ---- Auth ---- */
-async function hashPw(pw) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+let running=false, watchId=null;
+let allSpeeds=[], alts=[], altProfile=[], totalDist=0, lastPos=null, lastSlopePct=0;
 
-async function doRegister() {
-  const u = document.getElementById('loginUser').value.trim().toLowerCase();
-  const p = document.getElementById('loginPass').value;
-  const el = document.getElementById('loginErr');
-  el.innerHTML = '';
-  if (!u || !p) { el.innerHTML = '<div class="err">Compila username e password.</div>'; return; }
-  if (u.length < 3) { el.innerHTML = '<div class="err">Username min 3 caratteri.</div>'; return; }
-  if (p.length < 4) { el.innerHTML = '<div class="err">Password min 4 caratteri.</div>'; return; }
-  if (lsGet('user:' + u)) { el.innerHTML = '<div class="err">Username già in uso.</div>'; return; }
-  const hash = await hashPw(p);
-  lsSet('user:' + u, { username: u, hash, created: Date.now() });
-  el.innerHTML = '<div class="ok">Account creato. Ora accedi.</div>';
-}
+function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{return false;}}
+function lsDel(k){try{localStorage.removeItem(k);}catch{}}
+function lsKeys(p){const o=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(p))o.push(k);}return o;}
 
-async function doLogin() {
-  const u = document.getElementById('loginUser').value.trim().toLowerCase();
-  const p = document.getElementById('loginPass').value;
-  const el = document.getElementById('loginErr');
-  el.innerHTML = '';
-  if (!u || !p) { el.innerHTML = '<div class="err">Compila username e password.</div>'; return; }
-  const rec = lsGet('user:' + u);
-  if (!rec) { el.innerHTML = '<div class="err">Username non trovato.</div>'; return; }
-  const hash = await hashPw(p);
-  if (hash !== rec.hash) { el.innerHTML = '<div class="err">Password errata.</div>'; return; }
-  currentUser = u;
-  document.getElementById('userLabel').textContent = u;
-  showScreen('scMain');
-  initGPS();
-}
-
-function doLogout() {
-  stopRun();
-  if (watchId) navigator.geolocation.clearWatch(watchId);
-  watchId = null;
-  currentUser = null;
-  showScreen('scLogin');
-}
-
-/* ---- Navigation ---- */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-  if (id === 'scHistory') loadHistory();
+  window.scrollTo(0,0);
+  if(id==='scHistory')loadHistory();
+}
+function switchTab(t){
+  document.getElementById('tabList').className='tab'+(t==='list'?' active':'');
+  document.getElementById('tabCompare').className='tab'+(t==='compare'?' active':'');
+  document.getElementById('histList').style.display=t==='list'?'block':'none';
+  document.getElementById('histCompare').style.display=t==='compare'?'block':'none';
+  if(t==='compare')loadCompare();
 }
 
-function switchTab(t) {
-  document.getElementById('tabList').className = 'tab' + (t === 'list' ? ' active' : '');
-  document.getElementById('tabCompare').className = 'tab' + (t === 'compare' ? ' active' : '');
-  document.getElementById('histList').style.display = t === 'list' ? 'block' : 'none';
-  document.getElementById('histCompare').style.display = t === 'compare' ? 'block' : 'none';
-  if (t === 'compare') loadCompare();
+function deg2rad(d){return d*Math.PI/180}
+function haversine(p1,p2){
+  const R=6371000,dLat=deg2rad(p2.lat-p1.lat),dLon=deg2rad(p2.lon-p1.lon);
+  const a=Math.sin(dLat/2)**2+Math.cos(deg2rad(p1.lat))*Math.cos(deg2rad(p2.lat))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-/* ---- GPS ---- */
-function deg2rad(d) { return d * Math.PI / 180; }
-function haversine(p1, p2) {
-  const R = 6371000, dLat = deg2rad(p2.lat - p1.lat), dLon = deg2rad(p2.lon - p1.lon);
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(deg2rad(p1.lat)) * Math.cos(deg2rad(p2.lat)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function onGPS(pos) {
-  const { latitude: lat, longitude: lon, altitude, speed, altitudeAccuracy, accuracy } = pos.coords;
-  const spKmh = speed != null ? speed * 3.6 : 0;
-  document.getElementById('speedNow').textContent = spKmh.toFixed(1);
-  document.getElementById('gpsDot').className = 'dot fix';
-  document.getElementById('gpsStatus').textContent = 'fix';
-  document.getElementById('gpsAcc').textContent = 'acc ' + accuracy.toFixed(0) + 'm';
-
-  if (altitude != null) {
-    document.getElementById('aNow').innerHTML = altitude.toFixed(0) + '<span class="unit"> m slm</span>';
-    document.getElementById('aAcc').innerHTML = (altitudeAccuracy != null ? altitudeAccuracy.toFixed(0) : '?') + '<span class="unit"> m</span>';
+function onGPS(pos){
+  const{latitude:lat,longitude:lon,altitude,speed,altitudeAccuracy,accuracy}=pos.coords;
+  const spKmh=speed!=null?Math.max(0,speed*3.6):0;
+  document.getElementById('speedNow').textContent=spKmh.toFixed(1);
+  document.getElementById('gpsDot').className='dot fix';
+  document.getElementById('gpsStatus').textContent='fix';
+  document.getElementById('gpsAcc').textContent='acc '+accuracy.toFixed(0)+'m';
+  if(altitude!=null){
+    document.getElementById('aNow').innerHTML=altitude.toFixed(0)+'<span class="unit"> m slm</span>';
+    document.getElementById('aAcc').innerHTML=(altitudeAccuracy!=null?altitudeAccuracy.toFixed(0):'?')+'<span class="unit"> m</span>';
   }
-
-  if (!running) return;
-
-  if (spKmh > 0.5) {
-    speeds.push(spKmh);
-    const avg = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-    document.getElementById('sMin').innerHTML = Math.min(...speeds).toFixed(1) + '<span class="unit">km/h</span>';
-    document.getElementById('sMax').innerHTML = Math.max(...speeds).toFixed(1) + '<span class="unit">km/h</span>';
-    document.getElementById('sAvg').innerHTML = avg.toFixed(1) + '<span class="unit">km/h</span>';
-    document.getElementById('sCnt').textContent = speeds.length + ' camp.';
-  }
-
-  if (altitude != null) {
+  if(!running)return;
+  allSpeeds.push(spKmh);
+  const minS=Math.min(...allSpeeds), maxS=Math.max(...allSpeeds), avgS=allSpeeds.reduce((a,b)=>a+b,0)/allSpeeds.length;
+  document.getElementById('sMin').innerHTML=minS.toFixed(1)+'<span class="unit">km/h</span>';
+  document.getElementById('sMax').innerHTML=maxS.toFixed(1)+'<span class="unit">km/h</span>';
+  document.getElementById('sAvg').innerHTML=avgS.toFixed(1)+'<span class="unit">km/h</span>';
+  document.getElementById('sCnt').textContent=allSpeeds.length+' camp.';
+  if(altitude!=null){
     alts.push(altitude);
-    const amin = Math.min(...alts), amax = Math.max(...alts);
-    document.getElementById('aMin').innerHTML = amin.toFixed(0) + '<span class="unit"> m</span>';
-    document.getElementById('aMax').innerHTML = amax.toFixed(0) + '<span class="unit"> m</span>';
-    document.getElementById('aDelta').textContent = (amax - amin).toFixed(0);
+    const amin=Math.min(...alts),amax=Math.max(...alts);
+    document.getElementById('aMin').innerHTML=amin.toFixed(0)+'<span class="unit"> m</span>';
+    document.getElementById('aMax').innerHTML=amax.toFixed(0)+'<span class="unit"> m</span>';
+    document.getElementById('aDelta').textContent=(amax-amin).toFixed(0);
     altProfile.push(altitude);
-    if (altProfile.length > MAX_PROF) altProfile.shift();
+    if(altProfile.length>80)altProfile.shift();
     drawProfile();
   }
-
-  const cur = { lat, lon };
-  if (lastPos) {
-    const d = haversine(lastPos, cur);
-    if (d < 500) {
-      totalDist += d;
-      const km = totalDist / 1000;
-      document.getElementById('sDist').textContent = km >= 1 ? km.toFixed(2) : totalDist.toFixed(0);
-      document.getElementById('sDistU').textContent = km >= 1 ? 'km' : 'm';
-      if (alts.length >= 2 && totalDist > 10) {
-        lastSlopePct = ((alts[alts.length - 1] - alts[0]) / totalDist) * 100;
-        document.getElementById('slope').textContent = lastSlopePct.toFixed(1) + '%';
+  const cur={lat,lon};
+  if(lastPos){
+    const d=haversine(lastPos,cur);
+    if(d<500){
+      totalDist+=d;
+      const km=totalDist/1000;
+      document.getElementById('sDist').textContent=km>=1?km.toFixed(2):totalDist.toFixed(0);
+      document.getElementById('sDistU').textContent=km>=1?'km':'m';
+      if(alts.length>=2&&totalDist>10){
+        lastSlopePct=((alts[alts.length-1]-alts[0])/totalDist)*100;
+        document.getElementById('slope').textContent=lastSlopePct.toFixed(1)+'%';
       }
     }
   }
-  lastPos = cur;
-  if (spKmh > 20) updateCVDisplay(spKmh, lastSlopePct);
-  document.getElementById('statusBar').textContent = lat.toFixed(5) + ', ' + lon.toFixed(5);
+  lastPos=cur;
+  if(spKmh>10)updateCV(spKmh,lastSlopePct);
+  document.getElementById('statusBar').textContent=lat.toFixed(5)+', '+lon.toFixed(5);
+}
+function onGPSErr(e){
+  document.getElementById('gpsDot').className='dot nofix';
+  document.getElementById('gpsStatus').textContent='errore';
+  const m={1:'Permesso GPS negato.',2:'Posizione non disponibile.',3:'Timeout GPS.'};
+  document.getElementById('statusBar').textContent=m[e.code]||'Errore GPS.';
+}
+function initGPS(){
+  if(!navigator.geolocation){document.getElementById('statusBar').textContent='GPS non supportato.';return;}
+  watchId=navigator.geolocation.watchPosition(onGPS,onGPSErr,{enableHighAccuracy:true,maximumAge:0,timeout:8000});
 }
 
-function onGPSErr(e) {
-  document.getElementById('gpsDot').className = 'dot nofix';
-  document.getElementById('gpsStatus').textContent = 'errore';
-  const msgs = { 1: 'Permesso GPS negato.', 2: 'Posizione non disponibile.', 3: 'Timeout GPS.' };
-  document.getElementById('statusBar').textContent = msgs[e.code] || 'Errore GPS.';
+function calcCV(spd,slp){
+  const vt=document.getElementById('vType').value, vp=VH[vt];
+  const M=(parseFloat(document.getElementById('wMezzo').value)||vp.wDef)+(parseFloat(document.getElementById('wPilota').value)||vp.pDef);
+  const v=spd/3.6,g=9.81,Cr=0.013,rho=1.225,sr=Math.atan(slp/100);
+  return(0.5*rho*vp.Cd*vp.A*v*v+Cr*M*g*Math.cos(sr)+M*g*Math.sin(sr))*v/735.5;
+}
+function updateCV(spd,slp){
+  const cv=calcCV(spd,slp);
+  document.getElementById('cvNum').textContent=cv.toFixed(1);
+  document.getElementById('cvRange').textContent='('+(cv*0.82).toFixed(1)+'–'+(cv*1.22).toFixed(1)+')';
+  const dir=slp>1?'salita':slp<-1?'discesa':'piano';
+  const vp=VH[document.getElementById('vType').value];
+  document.getElementById('cvNote').textContent=spd.toFixed(0)+' km/h su '+dir+' ('+slp.toFixed(1)+'%). Cd '+vp.Cd+' A '+vp.A+'m². ±20%.';
 }
 
-function initGPS() {
-  if (!navigator.geolocation) { document.getElementById('statusBar').textContent = 'GPS non supportato.'; return; }
-  watchId = navigator.geolocation.watchPosition(onGPS, onGPSErr, { enableHighAccuracy: true, maximumAge: 0, timeout: 8000 });
-}
-
-/* ---- CV ---- */
-function calcCV(speedKmh, slopePct) {
-  const M = (parseFloat(document.getElementById('wMezzo').value) || 75) + (parseFloat(document.getElementById('wPilota').value) || 70);
-  const v = speedKmh / 3.6, g = 9.81, Cd = 0.65, A = 0.45, rho = 1.225, Cr = 0.015;
-  const sr = Math.atan(slopePct / 100);
-  return (0.5 * rho * Cd * A * v * v + Cr * M * g * Math.cos(sr) + M * g * Math.sin(sr)) * v / 735.5;
-}
-
-function updateCVDisplay(spd, slp) {
-  const cv = calcCV(spd, slp);
-  document.getElementById('cvNum').textContent = cv.toFixed(1);
-  document.getElementById('cvRange').textContent = '(' + (cv * 0.82).toFixed(1) + '–' + (cv * 1.22).toFixed(1) + ')';
-  const dir = slp > 1 ? 'salita' : slp < -1 ? 'discesa' : 'piano';
-  document.getElementById('cvNote').textContent = spd.toFixed(0) + ' km/h su ' + dir + ' (' + slp.toFixed(1) + '%). ±20%.';
-}
-
-/* ---- Profile chart ---- */
-function drawProfile() {
-  const canvas = document.getElementById('profCanvas');
-  if (!canvas) return;
-  const W = canvas.offsetWidth || 340, H = 52;
-  canvas.width = W; canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, W, H);
-  if (altProfile.length < 2) return;
-  const mn = Math.min(...altProfile), mx = Math.max(...altProfile), range = mx - mn || 1;
+function drawProfile(){
+  const c=document.getElementById('profCanvas');if(!c)return;
+  const W=c.offsetWidth||340,H=52;c.width=W;c.height=H;
+  const ctx=c.getContext('2d');ctx.clearRect(0,0,W,H);
+  if(altProfile.length<2)return;
+  const mn=Math.min(...altProfile),mx=Math.max(...altProfile),rng=mx-mn||1;
   ctx.beginPath();
-  altProfile.forEach((a, i) => {
-    const x = (i / (altProfile.length - 1)) * W;
-    const y = H - ((a - mn) / range) * (H - 8) - 4;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 1.5; ctx.stroke();
-  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
-  ctx.fillStyle = 'rgba(46,204,113,0.1)'; ctx.fill();
-  ctx.font = '9px monospace'; ctx.fillStyle = 'rgba(255,255,255,0.3)';
-  ctx.fillText(mn.toFixed(0) + 'm', 3, H - 3);
-  ctx.fillText(mx.toFixed(0) + 'm', 3, 11);
+  altProfile.forEach((a,i)=>{const x=(i/(altProfile.length-1))*W,y=H-((a-mn)/rng)*(H-8)-4;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.strokeStyle='#2ecc71';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
+  ctx.fillStyle='rgba(46,204,113,0.1)';ctx.fill();
+  ctx.font='9px monospace';ctx.fillStyle='rgba(255,255,255,0.3)';
+  ctx.fillText(mn.toFixed(0)+'m',3,H-3);ctx.fillText(mx.toFixed(0)+'m',3,11);
 }
 
-/* ---- Session controls ---- */
-function startRun() {
-  running = true;
-  document.getElementById('btnStart').disabled = true;
-  document.getElementById('btnStop').disabled = false;
-  document.getElementById('sessionSaveArea').style.display = 'none';
-  document.getElementById('statusBar').textContent = 'Sessione avviata.';
+function startRun(){
+  running=true;
+  document.getElementById('btnStart').disabled=true;
+  document.getElementById('btnStop').disabled=false;
+  document.getElementById('saveArea').style.display='none';
+  document.getElementById('statusBar').textContent='Sessione avviata.';
 }
-
-function stopRun() {
-  running = false;
-  document.getElementById('btnStart').disabled = false;
-  document.getElementById('btnStop').disabled = true;
-  if (speeds.length > 0) document.getElementById('sessionSaveArea').style.display = 'block';
-  document.getElementById('statusBar').textContent = 'Sessione terminata.';
+function stopRun(){
+  running=false;
+  document.getElementById('btnStart').disabled=false;
+  document.getElementById('btnStop').disabled=true;
+  if(allSpeeds.length>0)document.getElementById('saveArea').style.display='block';
+  document.getElementById('statusBar').textContent='Sessione terminata. Salva o reset.';
 }
-
-function resetRun() {
+function resetRun(){
   stopRun();
-  speeds = []; alts = []; altProfile = []; totalDist = 0; lastPos = null; lastSlopePct = 0;
-  document.getElementById('speedNow').textContent = '0';
-  ['sMin', 'sMax', 'sAvg'].forEach(id => { document.getElementById(id).innerHTML = '—<span class="unit">km/h</span>'; });
-  document.getElementById('sCnt').textContent = '0 camp.';
-  document.getElementById('sDist').textContent = '0'; document.getElementById('sDistU').textContent = 'm';
-  ['aMin', 'aMax'].forEach(id => { document.getElementById(id).innerHTML = '—<span class="unit"> m</span>'; });
-  document.getElementById('aDelta').textContent = '0'; document.getElementById('slope').textContent = '0.0%';
-  document.getElementById('cvNum').textContent = '—'; document.getElementById('cvRange').textContent = '';
-  document.getElementById('cvNote').textContent = 'Avvia e raggiungi 20+ km/h.';
-  document.getElementById('sessionSaveArea').style.display = 'none';
-  const canvas = document.getElementById('profCanvas');
-  if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-  document.getElementById('statusBar').textContent = 'Reset completato.';
+  allSpeeds=[];alts=[];altProfile=[];totalDist=0;lastPos=null;lastSlopePct=0;
+  document.getElementById('speedNow').textContent='0';
+  ['sMin','sMax','sAvg'].forEach(id=>{document.getElementById(id).innerHTML='—<span class="unit">km/h</span>';});
+  document.getElementById('sCnt').textContent='0 camp.';
+  document.getElementById('sDist').textContent='0';document.getElementById('sDistU').textContent='m';
+  ['aMin','aMax'].forEach(id=>{document.getElementById(id).innerHTML='—<span class="unit"> m</span>';});
+  document.getElementById('aDelta').textContent='0';document.getElementById('slope').textContent='0.0%';
+  document.getElementById('cvNum').textContent='—';document.getElementById('cvRange').textContent='';
+  document.getElementById('cvNote').textContent='Avvia e raggiungi velocità.';
+  document.getElementById('saveArea').style.display='none';
+  document.getElementById('saveErr').innerHTML='';
+  const c=document.getElementById('profCanvas');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height);
+  document.getElementById('statusBar').textContent='Reset completato.';
 }
 
-/* ---- Save session ---- */
-function saveSession() {
-  const name = document.getElementById('sessionName').value.trim();
-  const errEl = document.getElementById('saveErr');
-  errEl.innerHTML = '';
-  if (!name) { errEl.innerHTML = '<div class="err">Inserisci un nome.</div>'; return; }
-  if (speeds.length === 0) { errEl.innerHTML = '<div class="err">Nessun dato da salvare.</div>'; return; }
-  const avg = speeds.reduce((a, b) => a + b, 0) / speeds.length;
-  const cvEst = speeds.length > 0 ? calcCV(Math.max(...speeds), lastSlopePct) : null;
-  const session = {
-    name, date: Date.now(),
-    speedMin: Math.min(...speeds), speedMax: Math.max(...speeds), speedAvg: avg, samples: speeds.length,
-    distM: totalDist,
-    altMin: alts.length ? Math.min(...alts) : null, altMax: alts.length ? Math.max(...alts) : null,
-    altDelta: alts.length ? Math.max(...alts) - Math.min(...alts) : null,
-    slopePct: lastSlopePct, cvEst,
-    wMezzo: parseFloat(document.getElementById('wMezzo').value) || 75,
-    wPilota: parseFloat(document.getElementById('wPilota').value) || 70
+function saveSession(){
+  const name=document.getElementById('sessionName').value.trim();
+  const errEl=document.getElementById('saveErr');errEl.innerHTML='';
+  if(!name){errEl.innerHTML='<div class="err">Inserisci un nome.</div>';return;}
+  if(allSpeeds.length===0){errEl.innerHTML='<div class="err">Nessun dato.</div>';return;}
+  const maxS=Math.max(...allSpeeds);
+  const vt=document.getElementById('vType').value;
+  const session={
+    name,date:Date.now(),vType:vt,vLabel:VH[vt].label,
+    speedMin:Math.min(...allSpeeds),speedMax:maxS,
+    speedAvg:allSpeeds.reduce((a,b)=>a+b,0)/allSpeeds.length,
+    samples:allSpeeds.length,distM:totalDist,
+    altMin:alts.length?Math.min(...alts):null,altMax:alts.length?Math.max(...alts):null,
+    altDelta:alts.length?Math.max(...alts)-Math.min(...alts):null,
+    slopePct:lastSlopePct,cvEst:maxS>10?calcCV(maxS,lastSlopePct):null,
+    wMezzo:parseFloat(document.getElementById('wMezzo').value)||VH[vt].wDef,
+    wPilota:parseFloat(document.getElementById('wPilota').value)||VH[vt].pDef
   };
-  const key = 'sess:' + currentUser + ':' + Date.now();
-  if (lsSet(key, session)) {
-    errEl.innerHTML = '<div class="ok">Sessione "' + name + '" salvata.</div>';
-    document.getElementById('sessionName').value = '';
-    setTimeout(() => { errEl.innerHTML = ''; }, 3000);
-  } else {
-    errEl.innerHTML = '<div class="err">Errore salvataggio (storage pieno?).</div>';
-  }
+  if(lsSet('sess:'+Date.now(),session)){
+    errEl.innerHTML='<div class="ok">Salvata "'+name+'".</div>';
+    document.getElementById('sessionName').value='';
+    setTimeout(()=>{errEl.innerHTML='';},3000);
+  }else{errEl.innerHTML='<div class="err">Errore salvataggio.</div>';}
 }
 
-/* ---- History ---- */
-function loadHistory() {
-  const keys = lsKeys('sess:' + currentUser + ':');
-  const sessions = keys.map(k => ({ key: k, ...lsGet(k) })).filter(s => s.name);
-  sessions.sort((a, b) => b.date - a.date);
-  const listEl = document.getElementById('histList');
-  if (sessions.length === 0) {
-    listEl.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nessuna sessione salvata.</div>';
-    return;
-  }
-  listEl.innerHTML = sessions.map(s => {
-    const d = new Date(s.date);
-    const ds = d.toLocaleDateString('it-IT') + ' ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    const distStr = s.distM >= 1000 ? (s.distM / 1000).toFixed(2) + ' km' : s.distM.toFixed(0) + ' m';
-    return `<div class="session-item" onclick="showDetail('${s.key}')">
-      <button class="si-del" onclick="event.stopPropagation();delSession('${s.key}')">elimina</button>
-      <div class="si-name">${s.name}</div>
-      <div class="si-meta">${ds}</div>
-      <div class="si-stats">
+function loadHistory(){
+  const keys=lsKeys('sess:');
+  const sessions=keys.map(k=>({key:k,...lsGet(k)})).filter(s=>s.name);
+  sessions.sort((a,b)=>b.date-a.date);
+  const el=document.getElementById('histList');
+  if(!sessions.length){el.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Nessuna sessione salvata.</div>';return;}
+  el.innerHTML=sessions.map(s=>{
+    const d=new Date(s.date);
+    const ds=d.toLocaleDateString('it-IT')+' '+d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    const dist=s.distM>=1000?(s.distM/1000).toFixed(2)+' km':s.distM.toFixed(0)+' m';
+    return`<div class="sitem" onclick="showDetail('${s.key}')">
+      <button class="sdel" onclick="event.stopPropagation();delSession('${s.key}')">elimina</button>
+      <div class="sname">${s.name}</div>
+      <div class="smeta">${ds} · ${s.vLabel||''}</div>
+      <div class="sstats">
         <span>max ${s.speedMax.toFixed(0)} km/h</span>
         <span>med ${s.speedAvg.toFixed(0)} km/h</span>
-        <span>${distStr}</span>
-        ${s.cvEst ? '<span>~' + s.cvEst.toFixed(1) + ' CV</span>' : ''}
+        <span>${dist}</span>
+        ${s.cvEst?'<span>~'+s.cvEst.toFixed(1)+' CV</span>':''}
       </div>
     </div>`;
   }).join('');
 }
-
-function delSession(key) {
-  if (!confirm('Eliminare questa sessione?')) return;
-  lsDel(key);
-  loadHistory();
-}
-
-function showDetail(key) {
-  const s = lsGet(key);
-  if (!s) return;
-  const d = new Date(s.date);
-  document.getElementById('detailTitle').textContent = s.name;
-  const distStr = s.distM >= 1000 ? (s.distM / 1000).toFixed(2) + ' km' : s.distM.toFixed(0) + ' m';
-  document.getElementById('detailBody').innerHTML = `
+function delSession(key){if(!confirm('Eliminare?'))return;lsDel(key);loadHistory();}
+function showDetail(key){
+  const s=lsGet(key);if(!s)return;
+  const d=new Date(s.date);
+  document.getElementById('detailTitle').textContent=s.name;
+  const dist=s.distM>=1000?(s.distM/1000).toFixed(2)+' km':s.distM.toFixed(0)+' m';
+  document.getElementById('detailBody').innerHTML=`
     <div class="card">
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${d.toLocaleDateString('it-IT')} ${d.toLocaleTimeString('it-IT')}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${d.toLocaleDateString('it-IT')} ${d.toLocaleTimeString('it-IT')} · ${s.vLabel||''}</div>
       <div class="grid2">
         <div class="mcard"><div class="label">vel. max</div><div class="val">${s.speedMax.toFixed(1)}<span class="unit"> km/h</span></div></div>
         <div class="mcard"><div class="label">vel. min</div><div class="val">${s.speedMin.toFixed(1)}<span class="unit"> km/h</span></div></div>
         <div class="mcard"><div class="label">media</div><div class="val">${s.speedAvg.toFixed(1)}<span class="unit"> km/h</span></div></div>
         <div class="mcard"><div class="label">campioni</div><div class="val">${s.samples}</div></div>
-        <div class="mcard"><div class="label">distanza</div><div class="val">${distStr}</div></div>
+        <div class="mcard"><div class="label">distanza</div><div class="val">${dist}</div></div>
         <div class="mcard"><div class="label">pendenza</div><div class="val">${s.slopePct.toFixed(1)}<span class="unit"> %</span></div></div>
-        ${s.altMin != null ? `<div class="mcard"><div class="label">alt. min</div><div class="val">${s.altMin.toFixed(0)}<span class="unit"> m</span></div></div>` : ''}
-        ${s.altMax != null ? `<div class="mcard"><div class="label">alt. max</div><div class="val">${s.altMax.toFixed(0)}<span class="unit"> m</span></div></div>` : ''}
-        ${s.cvEst != null ? `<div class="mcard" style="grid-column:span 2"><div class="label">stima potenza</div><div class="val">${s.cvEst.toFixed(1)}<span class="unit"> CV</span> <span style="font-size:11px;color:var(--text2)">(${(s.cvEst * 0.82).toFixed(1)}–${(s.cvEst * 1.22).toFixed(1)})</span></div></div>` : ''}
+        ${s.altMin!=null?`<div class="mcard"><div class="label">alt. min</div><div class="val">${s.altMin.toFixed(0)}<span class="unit"> m</span></div></div>`:''}
+        ${s.altMax!=null?`<div class="mcard"><div class="label">alt. max</div><div class="val">${s.altMax.toFixed(0)}<span class="unit"> m</span></div></div>`:''}
+        ${s.cvEst!=null?`<div class="mcard" style="grid-column:span 2"><div class="label">stima potenza a vel. max</div><div class="val">${s.cvEst.toFixed(1)}<span class="unit"> CV</span> <span style="font-size:11px;color:var(--text2)">(${(s.cvEst*0.82).toFixed(1)}–${(s.cvEst*1.22).toFixed(1)})</span></div></div>`:''}
       </div>
-      <div style="font-size:10px;color:var(--text3);margin-top:8px">Mezzo ${s.wMezzo} kg · Pilota ${s.wPilota} kg</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:8px">Veicolo ${s.wMezzo} kg · Pilota/i ${s.wPilota} kg</div>
     </div>`;
   showScreen('scDetail');
 }
-
-function loadCompare() {
-  const keys = lsKeys('sess:' + currentUser + ':');
-  const sessions = keys.map(k => lsGet(k)).filter(s => s && s.name);
-  sessions.sort((a, b) => b.date - a.date);
-  const el = document.getElementById('histCompare');
-  if (sessions.length < 2) {
-    el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Servono almeno 2 sessioni.</div>';
-    return;
-  }
-  const maxSpd = Math.max(...sessions.map(s => s.speedMax));
-  const maxCV = Math.max(...sessions.filter(s => s.cvEst).map(s => s.cvEst));
-  const rows = sessions.map(s => {
-    const d = new Date(s.date).toLocaleDateString('it-IT');
-    return `<tr>
-      <td style="color:var(--text)">${s.name}<br><span style="font-size:9px;color:var(--text3)">${d}</span></td>
-      <td class="${s.speedMax === maxSpd ? 'best' : ''}">${s.speedMax.toFixed(0)}</td>
-      <td>${s.speedAvg.toFixed(0)}</td>
-      <td>${s.slopePct.toFixed(1)}%</td>
-      <td class="${s.cvEst && s.cvEst === maxCV ? 'best' : ''}">${s.cvEst ? s.cvEst.toFixed(1) : '—'}</td>
-    </tr>`;
-  }).join('');
-  el.innerHTML = `<div style="overflow-x:auto"><table class="compare-table">
-    <thead><tr><th>Sessione</th><th>Max</th><th>Med</th><th>Pend.</th><th>CV</th></tr></thead>
-    <tbody>${rows}</tbody>
+function loadCompare(){
+  const sessions=lsKeys('sess:').map(k=>lsGet(k)).filter(s=>s&&s.name);
+  sessions.sort((a,b)=>b.date-a.date);
+  const el=document.getElementById('histCompare');
+  if(sessions.length<2){el.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:24px">Servono almeno 2 sessioni.</div>';return;}
+  const maxS=Math.max(...sessions.map(s=>s.speedMax));
+  const maxCV=Math.max(...sessions.filter(s=>s.cvEst).map(s=>s.cvEst));
+  el.innerHTML=`<div style="overflow-x:auto"><table class="ctab">
+    <thead><tr><th>Sessione</th><th>Max km/h</th><th>Med km/h</th><th>Pend.</th><th>CV</th></tr></thead>
+    <tbody>${sessions.map(s=>{
+      const d=new Date(s.date).toLocaleDateString('it-IT');
+      return`<tr>
+        <td style="color:var(--text)">${s.name}<br><span style="font-size:9px;color:var(--text3)">${d}</span></td>
+        <td class="${s.speedMax===maxS?'best':''}">${s.speedMax.toFixed(0)}</td>
+        <td>${s.speedAvg.toFixed(0)}</td>
+        <td>${s.slopePct.toFixed(1)}%</td>
+        <td class="${s.cvEst&&s.cvEst===maxCV?'best':''}">${s.cvEst?s.cvEst.toFixed(1):'—'}</td>
+      </tr>`;
+    }).join('')}</tbody>
   </table></div>
-  <div style="font-size:10px;color:var(--text3);margin-top:6px">Verde = miglior valore. Velocità in km/h.</div>`;
+  <div style="font-size:10px;color:var(--text3);margin-top:6px">Verde = miglior valore.</div>`;
 }
+
+updateVehicle();
+initGPS();
 </script>
 </body>
 </html>
